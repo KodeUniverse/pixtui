@@ -54,20 +54,20 @@ pub struct PixelGrid {
     x: u8,
     y: u8,
     pixel_count: u32,
-    grid: Vec<Vec<Pixel>>,
+    pub grid: Vec<Vec<Pixel>>,
 }
 
 impl PixelGrid {
-    fn new(x: u8, y: u8) -> Self {
+    pub fn new(x: u8, y: u8) -> Self {
         let dummy_px = Pixel::new(PixelColor::new(140, 50, 20, None));
         Self {
             x,
             y,
             pixel_count: (x as u32 * y as u32),
-            grid: vec![vec![dummy_px; (y - 1).into()]; (x - 1).into()],
+            grid: vec![vec![dummy_px; y as usize]; x as usize],
         }
     }
-    fn save_to_file() {
+    pub fn save_to_file() {
         todo!();
     }
 }

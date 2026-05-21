@@ -21,9 +21,33 @@ fn read_event() -> io::Result<Option<KeyEvent>> {
 }
 
 fn handle_editor(app: &mut App, key_event: KeyEvent) -> io::Result<()> {
+    let state = &mut app.pixel_select_state;
+    let grid_size = app.editor.pixel_grid.grid.len();
     match key_event.code {
-        KeyCode::Char('q') => {
-            app.exit();
+        KeyCode::Char('q') => app.exit(),
+        KeyCode::Up => {
+            let y = state.selected().unwrap_or(0);
+            if y > 0 {
+                state.select(Some(y - 1));
+            }
+        }
+        KeyCode::Down => {
+            let y = state.selected().unwrap_or(0);
+            if y < grid_size - 1 {
+                state.select(Some(y + 1));
+            }
+        }
+        KeyCode::Left => {
+            let x = state.selected_column().unwrap_or(0);
+            if x > 0 {
+                state.select_column(Some(x - 1));
+            }
+        }
+        KeyCode::Right => {
+            let x = state.selected_column().unwrap_or(0);
+            if x < grid_size - 1 {
+                state.select_column(Some(x + 1));
+            }
         }
         _ => {}
     }
