@@ -1,6 +1,7 @@
 use crate::app::{App, Route};
 use crossterm::event::{self, Event, KeyCode, KeyEvent, KeyEventKind};
 use std::io;
+use std::io::{Error, ErrorKind};
 
 pub fn handle_events(app: &mut App) -> io::Result<()> {
     match read_event()? {
@@ -20,13 +21,37 @@ fn read_event() -> io::Result<Option<KeyEvent>> {
 }
 
 fn handle_editor(app: &mut App, key_event: KeyEvent) -> io::Result<()> {
+    match key_event.code {
+        KeyCode::Char('q') => {
+            app.exit();
+        }
+        _ => {}
+    }
     Ok(())
 }
 
 fn handle_home(app: &mut App, key_event: KeyEvent) -> io::Result<()> {
     match key_event.code {
         KeyCode::Char('q') => app.exit(),
-        KeyCode::Up => {}
+        KeyCode::Up => {
+            app.home_list_state.scroll_up_by(1);
+        }
+        KeyCode::Down => {
+            app.home_list_state.scroll_down_by(1);
+        }
+        KeyCode::Enter => {
+            let selection = app
+                .home_list_state
+                .selected_mut()
+                .unwrap_or_else(|| usize::MAX);
+
+            match selection {
+                0 => app.route = Route::Editor, //create project,
+                1 => (),                        //existing
+                2 => (),                        //settings
+                _ => panic!(),                  // error
+            }
+        }
         _ => {}
     }
     Ok(())

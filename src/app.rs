@@ -1,6 +1,4 @@
-use ratatui::buffer::Buffer;
-use ratatui::layout::Rect;
-use ratatui::widgets::Widget;
+use ratatui::widgets::ListState;
 use ratatui::{DefaultTerminal, Frame};
 use std::io;
 
@@ -13,21 +11,33 @@ pub enum Route {
     Home,
     Editor,
 }
+
+pub enum HomeOptions {
+    CreateProject,
+    OpenExisting,
+    OpenSettings,
+}
+
 pub struct App {
     pub route: Route,
     pub home: home::Home,
     pub editor: editor::Editor,
+    pub home_list_state: ListState,
+
     exit: bool,
 }
 
 impl Default for App {
     fn default() -> Self {
-        Self {
+        let mut out = Self {
             route: Route::Home,
             home: home::Home::default(),
             editor: editor::Editor::default(),
+            home_list_state: ListState::default(),
             exit: false,
-        }
+        };
+        out.home_list_state.select_first();
+        return out;
     }
 }
 impl App {
@@ -42,18 +52,13 @@ impl App {
     pub fn exit(&mut self) {
         self.exit = true;
     }
-    fn draw(&self, frame: &mut Frame) {
-        frame.render_widget(self, frame.area());
-    }
-}
-impl Widget for &App {
-    fn render(self, area: Rect, buf: &mut Buffer) {
+    fn draw(&mut self, frame: &mut Frame) {
         match self.route {
             Route::Home => {
-                home::Home.render(area, buf);
+                frame.render_stateful_widget(&self.home, frame.area(), &mut self.home_list_state);
             }
             Route::Editor => {
-                editor::Editor.render(area, buf);
+                frame.render_widget(&self.editor, frame.area());
             }
         }
     }
