@@ -1,4 +1,7 @@
-#Todo/Featues in Roadmap:
+# PixTUI
+An interactive terminal app for creating, editing, and saving pixel art. Built with Rust and ratatui.
+
+## Todo/Features in Roadmap:
 - Finish main functionality
 - Add layers
 - Add ability to export to PNG, create sprite sheet
