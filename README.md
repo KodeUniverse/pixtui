@@ -1,4 +1,4 @@
-#Todo/Featues in Roadmap:
+# Todo/Features in Roadmap:
 - Finish main functionality
 - Add layers
 - Add ability to export to PNG, create sprite sheet
