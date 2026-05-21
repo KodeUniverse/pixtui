@@ -4,7 +4,7 @@ use crossterm::event::{self, Event, KeyCode, KeyEvent, KeyEventKind};
 use ratatui::{
     DefaultTerminal, Frame,
     buffer::Buffer,
-    layout::{Alignment, Constraint, Direction, Layout, Rect},
+    layout::{Alignment, Constraint, Direction, Flex, Layout, Rect},
     style::Stylize,
     symbols::border,
     text::{Line, Text},
@@ -45,25 +45,16 @@ impl App {
             ListItem::new("Open existing project"),
             ListItem::new("Options"),
         ];
-        let vert = Layout::vertical([
-            Constraint::Fill(1),
-            Constraint::Length(5),
-            Constraint::Fill(1),
-        ])
-        .split(area);
-        let horiz = Layout::horizontal([
-            Constraint::Fill(1),
-            Constraint::Percentage(60),
-            Constraint::Fill(1),
-        ])
-        .split(vert[1]);
+        let vert = Layout::vertical([Constraint::Fill(1), Constraint::Percentage(40)]).split(area);
+        let block_slot = Rect::new(area.width / 2 - 25, vert[1].y, 50, 10);
         let block = Block::bordered().border_set(border::THICK);
+        Line::from("PIXTERM")
+            .centered()
+            .render(vert[0].centered_vertically(Constraint::Percentage(30)), buf);
         List::new(items)
             .highlight_symbol(">")
             .block(block)
-            .render(horiz[0], buf);
-        let display_block = Block::bordered().border_set(border::THICK);
-        display_block.render(horiz[1], buf);
+            .render(block_slot, buf);
     }
     fn render_editor(&self, area: Rect, buf: &mut Buffer) {
         let block = Block::bordered().border_set(border::THICK);
@@ -81,6 +72,7 @@ impl App {
     fn handle_key_event(&mut self, key_event: KeyEvent) {
         match key_event.code {
             KeyCode::Char('q') => self.exit(),
+            KeyCode::Up => {}
             _ => {}
         }
     }
