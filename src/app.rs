@@ -4,7 +4,6 @@ use std::io;
 
 use crate::events::handle_events;
 use crate::pixels::PixelColor;
-use crate::routes::editor::Editor;
 use crate::routes::{editor, home};
 
 #[derive(Debug, Default)]
@@ -17,15 +16,15 @@ pub enum Route {
 pub struct App<'a> {
     pub route: Route,
     pub home: home::Home,
-    pub editor: editor::Editor,
+    pub editor: editor::layout::Editor,
     pub home_list_state: ListState,
-    pub pixel_select_state: <&'a Editor as StatefulWidget>::State,
+    pub pixel_select_state: <&'a editor::layout::Editor as StatefulWidget>::State,
     exit: bool,
 }
 
 impl Default for App<'_> {
     fn default() -> Self {
-        let mut grid = editor::Editor::default();
+        let mut grid = editor::layout::Editor::default();
         grid.pixel_grid.grid[0][1].color = PixelColor::new(0, 255, 0, None);
         grid.pixel_grid.grid[0][61].color = PixelColor::new(0, 0, 255, None);
         grid.pixel_grid.grid[1][0].color = PixelColor::new(150, 200, 220, None);
