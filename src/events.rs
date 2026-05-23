@@ -22,10 +22,10 @@ fn read_event() -> io::Result<Option<KeyEvent>> {
 fn handle_editor(app: &mut App, key_event: KeyEvent) -> io::Result<()> {
     match key_event.code {
         KeyCode::Char('q') => app.exit(),
-        KeyCode::Up => app.editor.canvas.move_marker_up(1),
-        KeyCode::Down => app.editor.canvas.move_state_down(1),
-        KeyCode::Left => app.editor.canvas.move_state_left(1),
-        KeyCode::Right => app.editor.canvas.move_state_right(1),
+        KeyCode::Up => app.editor.canvas.move_select_up(1),
+        KeyCode::Down => app.editor.canvas.move_select_down(1),
+        KeyCode::Left => app.editor.canvas.move_select_left(1),
+        KeyCode::Right => app.editor.canvas.move_select_right(1),
         _ => {}
     }
     Ok(())

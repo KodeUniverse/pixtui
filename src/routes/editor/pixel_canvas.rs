@@ -1,3 +1,5 @@
+use std::io;
+
 use crate::pixels::PixelGrid;
 use ratatui::buffer::Buffer;
 use ratatui::layout::{Position, Rect};
@@ -18,17 +20,17 @@ impl PixelCanvas {
             y: 0,
         }
     }
-    pub fn move_marker_up(&mut self, by: u16) {
-        self.y -= by;
+    pub fn move_select_up(&mut self, by: u16) {
+        self.y = self.y.saturating_sub(by);
     }
-    pub fn move_state_down(&mut self, by: u16) {
-        self.y += by;
+    pub fn move_select_down(&mut self, by: u16) {
+        self.y = self.y.saturating_add(by);
     }
-    pub fn move_state_right(&mut self, by: u16) {
-        self.x += by;
+    pub fn move_select_right(&mut self, by: u16) {
+        self.x = self.x.saturating_add(by);
     }
-    pub fn move_state_left(&mut self, by: u16) {
-        self.x -= by;
+    pub fn move_select_left(&mut self, by: u16) {
+        self.x = self.x.saturating_sub(by);
     }
 }
 
