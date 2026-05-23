@@ -1,4 +1,4 @@
-# PixTUI
+# PIXELSCAPE
 An interactive terminal app for creating, editing, and saving pixel art. Built with Rust and ratatui.
 
 ## Todo/Features in Roadmap:
