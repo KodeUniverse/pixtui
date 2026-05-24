@@ -1,7 +1,9 @@
 use crate::app::{App, Route};
-use crossterm::event::{self, Event, KeyCode, KeyEvent, KeyEventKind};
+use crossterm::event::{
+    self, Event, KeyCode, KeyEvent, KeyEventKind, KeyModifiers, ModifierKeyCode,
+};
+use log::info;
 use std::io;
-
 pub fn handle_events(app: &mut App) -> io::Result<()> {
     match read_event()? {
         Some(event) => match app.route {
@@ -26,6 +28,13 @@ fn handle_editor(app: &mut App, key_event: KeyEvent) -> io::Result<()> {
         KeyCode::Down => app.editor.canvas.move_select_down(1),
         KeyCode::Left => app.editor.canvas.move_select_left(1),
         KeyCode::Right => app.editor.canvas.move_select_right(1),
+
+        // Vim Keybindings
+        KeyCode::Char('G') => {
+            app.editor
+                .canvas
+                .move_select_down(app.editor.canvas.grid.height - 1);
+        }
         _ => {}
     }
     Ok(())
@@ -41,10 +50,7 @@ fn handle_home(app: &mut App, key_event: KeyEvent) -> io::Result<()> {
             app.home_list_state.scroll_down_by(1);
         }
         KeyCode::Enter => {
-            let selection = app
-                .home_list_state
-                .selected_mut()
-                .unwrap_or_else(|| usize::MAX);
+            let selection = app.home_list_state.selected_mut().unwrap_or(usize::MAX);
 
             match selection {
                 0 => app.route = Route::Editor, //create project,
