@@ -1,4 +1,4 @@
-use crate::pixels::PixelGrid;
+use crate::pixels::{PixelColor, PixelGrid};
 use log::info;
 
 use ratatui::buffer::Buffer;
@@ -41,7 +41,7 @@ impl Default for PixelCanvas {
     fn default() -> Self {
         Self {
             cursor: Cursor { x: 0, y: 0 },
-            grid: PixelGrid::new(64, 64),
+            grid: PixelGrid::default(),
         }
     }
 }
@@ -74,49 +74,46 @@ impl Widget for &mut PixelCanvas {
             }
         }
         let px = self.cursor.x;
-        let py = self.cursor.y;
+        let py = self.cursor.y + 1;
         let ty = py / 2;
         let upper = py % 2 == 0;
 
         info!("pixel ({px}, {py})  terminal ({px}, {ty})");
 
-        // north
-        if py > 0 {
-            let cell = buf.cell_mut(Position::new(x_off + px, y_off + ty - if upper { 1 } else { 0 }));
-            if let Some(cell) = cell {
-                if upper {
-                    cell.bg = Color::White;
-                } else {
-                    cell.fg = Color::White;
-                }
-            }
-        }
+        let left_neighbor = self
+            .grid
+            .get(self.cursor.x.saturating_sub(1), self.cursor.y);
+        let right_neighbor = self
+            .grid
+            .get(self.cursor.x.saturating_add(1), self.cursor.y);
 
-        // south
-        if py + 1 < self.grid.height {
-            let cell = buf.cell_mut(Position::new(x_off + px, y_off + ty + if upper { 0 } else { 1 }));
-            if let Some(cell) = cell {
-                if upper {
-                    cell.bg = Color::White;
-                } else {
-                    cell.fg = Color::White;
-                }
-            }
-        }
+        let avg_neighbor_color = PixelColor::new(
+            ((left_neighbor.color.red as usize + right_neighbor.color.red as usize) / 2)
+                .try_into()
+                .unwrap_or(255),
+            ((left_neighbor.color.green as usize + right_neighbor.color.green as usize) / 2)
+                .try_into()
+                .unwrap_or(255),
+            ((left_neighbor.color.blue as usize + right_neighbor.color.blue as usize) / 2)
+                .try_into()
+                .unwrap_or(255),
+            None,
+        );
+        let cur_color: Color = Color::Rgb(
+            255 - avg_neighbor_color.red,
+            255 - avg_neighbor_color.green,
+            255 - avg_neighbor_color.blue,
+        );
 
-        // west
-        if px > 0 {
-            if let Some(cell) = buf.cell_mut(Position::new(x_off + px - 1, y_off + ty)) {
-                cell.set_char('▐');
-                cell.fg = Color::White;
-            }
-        }
-
-        // east
-        if px + 1 < self.grid.width {
-            if let Some(cell) = buf.cell_mut(Position::new(x_off + px + 1, y_off + ty)) {
-                cell.set_char('▌');
-                cell.fg = Color::White;
+        let cell = buf.cell_mut(Position::new(
+            x_off + px,
+            y_off + ty - if upper { 1 } else { 0 },
+        ));
+        if let Some(cell) = cell {
+            if upper {
+                cell.bg = cur_color;
+            } else {
+                cell.fg = cur_color;
             }
         }
     }

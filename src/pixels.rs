@@ -1,6 +1,6 @@
-use std::fmt::Display;
-
+use rand;
 use ratatui::style::Color;
+use std::fmt::Display;
 
 #[derive(Debug, Clone, Copy)]
 pub struct PixelColor {
@@ -94,6 +94,33 @@ pub struct PixelGrid {
     grid: Vec<Vec<Pixel>>,
 }
 
+impl Default for PixelGrid {
+    fn default() -> Self {
+        //let (red, green, blue) = r
+        let (width, height) = (64, 64);
+        let grid = (0..width)
+            .map(|x| {
+                (0..height)
+                    .map(|y| {
+                        Pixel::new(
+                            x,
+                            y,
+                            PixelColor::new(rand::random(), rand::random(), rand::random(), None),
+                        )
+                    })
+                    .collect()
+            })
+            .collect();
+
+        Self {
+            width,
+            height,
+            pixel_count: (width * height).into(),
+            grid,
+        }
+    }
+}
+
 impl PixelGrid {
     pub fn new(width: u16, height: u16) -> Self {
         let grid = (0..width)
@@ -111,7 +138,11 @@ impl PixelGrid {
             grid,
         }
     }
-    pub fn get(&mut self, x: u16, y: u16) -> &mut Pixel {
+
+    pub fn get(&self, x: u16, y: u16) -> &Pixel {
+        &self.grid[x as usize][y as usize]
+    }
+    pub fn get_mut(&mut self, x: u16, y: u16) -> &mut Pixel {
         &mut (self.grid[x as usize][y as usize])
     }
     pub fn save_to_file() {
@@ -132,7 +163,7 @@ mod tests {
     #[test]
     fn modify_pixel() {
         let mut px_grid = PixelGrid::new(4, 4);
-        *px_grid.get(0, 2) = Pixel::new(0, 2, PixelColor::new(255, 255, 255, None));
+        *px_grid.get_mut(0, 2) = Pixel::new(0, 2, PixelColor::new(255, 255, 255, None));
         let pixel = px_grid.get(0, 2);
         println!("{}", pixel);
     }

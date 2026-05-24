@@ -10,7 +10,7 @@ pub struct Editor {
 impl Default for Editor {
     fn default() -> Self {
         Self {
-            canvas: PixelCanvas::new(64, 64),
+            canvas: PixelCanvas::default(),
         }
     }
 }

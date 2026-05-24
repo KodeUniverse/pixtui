@@ -33,9 +33,9 @@ impl Default for App {
         };
 
         app.home_list_state.select_first();
-        app.editor.canvas.grid.get(0, 1).color = PixelColor::new(0, 255, 0, None);
+        app.editor.canvas.grid.get_mut(0, 1).color = PixelColor::new(0, 255, 0, None);
         //app.editor.canvas.grid.get(0, 61).color = PixelColor::new(0, 0, 255, None);
-        app.editor.canvas.grid.get(1, 0).color = PixelColor::new(150, 200, 220, None);
+        app.editor.canvas.grid.get_mut(1, 0).color = PixelColor::new(150, 200, 220, None);
         //app.editor.canvas.grid.get(61, 0).color = PixelColor::new(50, 50, 50, None);
 
         app
