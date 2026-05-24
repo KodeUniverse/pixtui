@@ -12,7 +12,12 @@ pub struct PixelColor {
 
 impl PixelColor {
     pub fn new(red: u8, green: u8, blue: u8, opacity: Option<u8>) -> Self {
-        Self { red, green, blue, opacity }
+        Self {
+            red,
+            green,
+            blue,
+            opacity,
+        }
     }
 
     pub fn invert(&self) -> Self {
@@ -25,6 +30,16 @@ impl PixelColor {
     }
 }
 
+impl Default for PixelColor {
+    fn default() -> Self {
+        Self {
+            red: 100,
+            green: 200,
+            blue: 100,
+            opacity: Some(1),
+        }
+    }
+}
 impl Display for PixelColor {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(
@@ -43,15 +58,17 @@ impl From<PixelColor> for Color {
 
 pub struct Pixel {
     pub color: PixelColor,
+    pub x: u16,
+    pub y: u16,
 }
 impl Pixel {
-    pub fn new(color: PixelColor) -> Self {
-        Self { color }
+    pub fn new(x: u16, y: u16, color: PixelColor) -> Self {
+        Self { x, y, color }
     }
 }
 impl Clone for Pixel {
     fn clone(&self) -> Self {
-        Pixel::new(self.color.clone())
+        Pixel::new(self.x, self.y, self.color.clone())
     }
 }
 impl Display for Pixel {
@@ -60,22 +77,42 @@ impl Display for Pixel {
     }
 }
 
+impl Default for Pixel {
+    fn default() -> Self {
+        Self {
+            color: PixelColor::default(),
+            x: 0,
+            y: 0,
+        }
+    }
+}
+
 pub struct PixelGrid {
     pub width: u16,
     pub height: u16,
     pub pixel_count: u32,
-    pub grid: Vec<Vec<Pixel>>,
+    grid: Vec<Vec<Pixel>>,
 }
 
 impl PixelGrid {
     pub fn new(width: u16, height: u16) -> Self {
-        let dummy_px = Pixel::new(PixelColor::new(140, 50, 20, None));
+        let grid = (0..width)
+            .map(|x| {
+                (0..height)
+                    .map(|y| Pixel::new(x, y, PixelColor::default()))
+                    .collect()
+            })
+            .collect();
+
         Self {
             width,
             height,
             pixel_count: (width as u32 * height as u32),
-            grid: vec![vec![dummy_px; height as usize]; width as usize],
+            grid,
         }
+    }
+    pub fn get(&mut self, x: u16, y: u16) -> &mut Pixel {
+        &mut (self.grid[x as usize][y as usize])
     }
     pub fn save_to_file() {
         todo!();
@@ -89,28 +126,14 @@ mod tests {
     #[test]
     fn pixel_grid() {
         let px_grid = PixelGrid::new(32, 32);
-        for vc in px_grid.grid {
-            for i in vc {
-                println!("{}", i);
-            }
-        }
+        println!("PixelGrid created with {} pixels", px_grid.pixel_count);
     }
 
     #[test]
     fn modify_pixel() {
         let mut px_grid = PixelGrid::new(4, 4);
-
-        for vc in &px_grid.grid {
-            for i in vc {
-                println!("{}", i);
-            }
-        }
-        px_grid.grid[0][2] = Pixel::new(PixelColor::new(255, 255, 255, None));
-
-        for vc in &px_grid.grid {
-            for i in vc {
-                println!("{}", i);
-            }
-        }
+        *px_grid.get(0, 2) = Pixel::new(0, 2, PixelColor::new(255, 255, 255, None));
+        let pixel = px_grid.get(0, 2);
+        println!("{}", pixel);
     }
 }
