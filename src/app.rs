@@ -14,6 +14,10 @@ pub enum Route {
     Editor,
 }
 
+pub enum EventMode {
+    Normal,
+    Input,
+}
 pub struct App {
     pub route: Route,
     pub home: home::Home,

@@ -133,6 +133,7 @@ impl Default for PixelGrid {
 pub enum SaveError {
     IO(io::Error),
     Encode(bincode::error::EncodeError),
+    Image(image::ImageError),
 }
 
 impl From<bincode::error::EncodeError> for SaveError {
@@ -143,6 +144,11 @@ impl From<bincode::error::EncodeError> for SaveError {
 impl From<io::Error> for SaveError {
     fn from(e: io::Error) -> Self {
         SaveError::IO(e)
+    }
+}
+impl From<image::ImageError> for SaveError {
+    fn from(e: image::ImageError) -> Self {
+        SaveError::Image(e)
     }
 }
 
@@ -174,6 +180,26 @@ impl PixelGrid {
         let buffer = fs::File::create_new(path)?;
         let mut buf_writer = BufWriter::new(buffer);
         bincode::encode_into_std_write(&self.grid, &mut buf_writer, config::standard())?;
+        Ok(())
+    }
+
+    pub fn export_to_png(&self, path: &Path) -> Result<(), SaveError> {
+        let width = self.width as u32;
+        let height = self.height as u32;
+        let mut img = image::RgbImage::new(width, height);
+
+        for x in 0..self.width {
+            for y in 0..self.height {
+                let pixel = self.get(x, y);
+                img.put_pixel(
+                    x as u32,
+                    y as u32,
+                    image::Rgb([pixel.color.red, pixel.color.green, pixel.color.blue]),
+                );
+            }
+        }
+
+        img.save(path)?;
         Ok(())
     }
 }
