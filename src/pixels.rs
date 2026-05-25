@@ -198,7 +198,7 @@ impl PixelGrid {
         bincode::encode_into_std_write(&self, &mut buf_writer, config::standard())?;
         Ok(())
     }
-    pub fn read_from_file(&self, path: &Path) -> Result<(), GridReadError> {
+    pub fn read_from_file(&mut self, path: &Path) -> Result<(), GridReadError> {
         todo!();
         Ok(())
     }

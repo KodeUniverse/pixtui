@@ -51,7 +51,7 @@ impl App {
         Self {
             route: Route::Editor,
             home: home::Home::default(),
-            editor: editor::layout::Editor::default(),
+            editor: editor::layout::Editor::start_with_file(file),
             home_list_state: ListState::default(),
             exit: false,
         }

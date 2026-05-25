@@ -15,7 +15,7 @@ pub struct Editor {
 }
 impl Editor {
     pub fn start_with_file(file: &Path) -> Self {
-        let canvas = PixelCanvas::default();
+        let mut canvas = PixelCanvas::default();
         canvas.grid.read_from_file(file).unwrap();
         Self {
             canvas,
