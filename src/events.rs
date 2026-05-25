@@ -1,6 +1,6 @@
 use crate::app::{App, Route};
 use crossterm::event::{self, Event, KeyCode, KeyEvent, KeyEventKind};
-use std::io;
+use std::{default, io};
 pub fn handle_events(app: &mut App) -> io::Result<()> {
     match read_event()? {
         Some(event) => match app.route {
@@ -26,6 +26,12 @@ fn handle_editor(app: &mut App, key_event: KeyEvent) -> io::Result<()> {
         KeyCode::Left => app.editor.canvas.move_select_left(1),
         KeyCode::Right => app.editor.canvas.move_select_right(1),
 
+        KeyCode::Char('S') => app.editor.saving = true,
+        KeyCode::Char('X') => app.editor.exporting = true,
+
+        // Escape events
+        KeyCode::Esc if app.editor.saving => app.editor.saving = false,
+        KeyCode::Esc if app.editor.exporting => app.editor.exporting = false,
         // Vim Keybindings
         KeyCode::Char('G') => {
             app.editor
