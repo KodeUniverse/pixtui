@@ -1,8 +1,6 @@
-use bincode::BorrowDecode;
 use bincode::Decode;
 use bincode::Encode;
 use bincode::config;
-use bincode::decode_from_std_read;
 use rand;
 use ratatui::style::Color;
 use std::fmt::Display;
@@ -11,7 +9,6 @@ use std::fs::File;
 use std::io;
 use std::io::BufReader;
 use std::io::BufWriter;
-use std::io::Error;
 use std::io::Read;
 use std::io::Write;
 use std::path::Path;
@@ -217,7 +214,7 @@ impl PixelGrid {
         bincode::encode_into_std_write(&self, &mut buf_writer, config::standard())?;
         Ok(())
     }
-    pub fn read_from_file(&self, path: &Path) -> Result<PixelGrid, GridReadError> {
+    pub fn read_from_file(path: &Path) -> Result<PixelGrid, GridReadError> {
         let buffer = File::open(path)?;
         let mut buf_reader = BufReader::new(buffer);
         let mut magic = [0u8; Self::MAGIC.len()];

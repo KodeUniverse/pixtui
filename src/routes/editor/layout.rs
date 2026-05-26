@@ -1,6 +1,7 @@
 use std::path::Path;
 
 use crate::app::EventMode;
+use crate::pixels::PixelGrid;
 use crate::routes::editor::pixel_canvas::PixelCanvas;
 use ratatui::buffer::Buffer;
 use ratatui::layout::{Constraint, HorizontalAlignment, Layout, Rect};
@@ -15,8 +16,8 @@ pub struct Editor {
 }
 impl Editor {
     pub fn start_with_file(file: &Path) -> Self {
-        let mut canvas = PixelCanvas::default();
-        canvas.grid.read_from_file(file).unwrap();
+        let px_grid: PixelGrid = PixelGrid::read_from_file(file).unwrap();
+        let canvas = PixelCanvas::from_grid(px_grid);
         Self {
             canvas,
             saving: false,

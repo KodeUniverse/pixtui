@@ -23,6 +23,14 @@ impl PixelCanvas {
             cursor: Cursor { x: 0, y: 0 },
         }
     }
+
+    pub fn from_grid(grid: PixelGrid) -> Self {
+        Self {
+            grid,
+            cursor: Cursor { x: 0, y: 0 },
+        }
+    }
+
     pub fn move_select_up(&mut self, by: u16) {
         self.cursor.y = self.cursor.y.saturating_sub(by);
     }
