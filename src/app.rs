@@ -5,7 +5,6 @@ use std::io;
 use std::path::Path;
 
 use crate::events::handle_events;
-use crate::pixels::PixelColor;
 use crate::routes::{editor, home};
 
 #[derive(Debug, Default)]

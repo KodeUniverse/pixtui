@@ -1,7 +1,6 @@
 use bincode::Decode;
 use bincode::Encode;
 use bincode::config;
-use rand;
 use ratatui::style::Color;
 use std::fmt::Display;
 use std::fs;
