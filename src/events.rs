@@ -95,6 +95,11 @@ fn handle_editor(app: &mut App, key_event: KeyEvent) -> io::Result<()> {
             );
         }
 
+        KeyCode::Char('x') => {
+            let (cur_x, cur_y) = (app.editor.canvas.cursor.x, app.editor.canvas.cursor.y);
+            let sel_pix = app.editor.canvas.grid.get_mut(cur_x, cur_y);
+            sel_pix.color = PixelColor::new(0, 0, 0, true);
+        }
         // Escape events
         KeyCode::Esc if app.editor.saving => app.editor.saving = false,
         KeyCode::Esc if app.editor.exporting => app.editor.exporting = false,

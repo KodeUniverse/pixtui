@@ -119,18 +119,7 @@ impl Default for PixelGrid {
         let grid = (0..width)
             .map(|x| {
                 (0..height)
-                    .map(|y| {
-                        Pixel::new(
-                            x,
-                            y,
-                            PixelColor::new(
-                                rand::random(),
-                                rand::random(),
-                                rand::random(),
-                                rand::random_bool(2f64 / 3f64),
-                            ),
-                        )
-                    })
+                    .map(|y| Pixel::new(x, y, PixelColor::new(0, 0, 0, true)))
                     .collect()
             })
             .collect();
